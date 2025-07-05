@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisis Data Saham Tesla</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        h1,
+        h2,
+        h3 {
+            color: #2c3e50;
+        }
+        
+        h1 {
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .code-block {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 20px 0;
+        }
+        
+        .visualization {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .conclusion {
+            background-color: #e8f4fc;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Analisis Data Saham Tesla (2010)</h1>
+
+    <section>
+        <h2>1. Gambaran Dataset</h2>
+        <p>Dataset ini berisi data historis saham Tesla dari 29 Juni 2010 hingga 23 Juli 2010 dengan kolom:</p>
+        <ul>
+            <li><strong>Date</strong>: Tanggal pencatatan</li>
+            <li><strong>Open</strong>: Harga pembukaan</li>
+            <li><strong>High</strong>: Harga tertinggi harian</li>
+            <li><strong>Low</strong>: Harga terendah harian</li>
+            <li><strong>Close</strong>: Harga penutupan</li>
+            <li><strong>Volume</strong>: Volume perdagangan</li>
+        </ul>
+
+        <div class="code-block">
+            <pre><code>import pandas as pd
+
+# Load data
+df = pd.read_csv('Tesla_stock_data.csv')
+print(df.head())</code></pre>
+        </div>
+    </section>
+
+    <section>
+        <h2>2. Statistik Deskriptif</h2>
+        <p>Analisis statistik dasar untuk memahami distribusi data:</p>
+
+        <div class="code-block">
+            <pre><code># Statistik deskriptif
+stats = df.describe()
+print(stats)</code></pre>
+        </div>
+
+        <div class="visualization">
+            <img src="stats_table.png" alt="Tabel Statistik Deskriptif" style="max-width: 100%;">
+            <p><em>Hasil statistik deskriptif menunjukkan rata-rata harga penutupan $1.31 dengan volatilitas (std dev) $0.16</em></p>
+        </div>
+    </section>
+
+    <section>
+        <h2>3. Visualisasi Penting</h2>
+
+        <h3>3.1 Pergerakan Harga Saham</h3>
+        <div class="code-block">
+            <pre><code>import matplotlib.pyplot as plt
+
+plt.figure(figsize=(12,6))
+plt.plot(df['Date'], df['Close'], label='Close Price', marker='o')
+plt.title('Perkembangan Harga Saham Tesla (Juni-Juli 2010)')
+plt.xlabel('Tanggal')
+plt.ylabel('Harga ($)')
+plt.xticks(rotation=45)
+plt.grid(True)
+plt.legend()
+plt.show()</code></pre>
+        </div>
+
+        <div class="visualization">
+            <img src="price_trend.png" alt="Trend Harga Saham" style="max-width: 100%;">
+            <p><em>Terlihat penurunan harga signifikan di awal Juli sebelum stabil di pertengahan bulan</em></p>
+        </div>
+
+        <h3>3.2 Korelasi Volume vs Harga</h3>
+        <div class="code-block">
+            <pre><code>import seaborn as sns
+
+plt.figure(figsize=(10,6))
+sns.scatterplot(x='Volume', y='Close', data=df, hue='Date')
+plt.title('Hubungan Volume Perdagangan vs Harga Penutupan')
+plt.show()</code></pre>
+        </div>
+    </section>
+
+    <section>
+        <h2>4. Analisis Regresi Linier</h2>
+        <p>Menganalisis pengaruh volume perdagangan terhadap harga penutupan:</p>
+
+        <div class="code-block">
+            <pre><code>import statsmodels.api as sm
+
+# Regresi linier
+X = df['Volume']
+y = df['Close']
+X = sm.add_constant(X)  # Tambah konstanta
+model = sm.OLS(y, X).fit()
+print(model.summary())</code></pre>
+        </div>
+
+        <div class="visualization">
+            <img src="regression_plot.png" alt="Plot Regresi" style="max-width: 100%;">
+            <p><em>Hasil regresi menunjukkan R-squared 0.227 yang berarti hanya 22.7% variasi harga bisa dijelaskan oleh volume</em></p>
+        </div>
+    </section>
+
+    <section class="conclusion">
+        <h2>5. Kesimpulan dan Rekomendasi</h2>
+        <p><strong>Temuan Utama:</strong></p>
+        <ul>
+            <li>Harga saham Tesla mengalami penurunan signifikan pada awal Juli 2010</li>
+            <li>Volume perdagangan memiliki pengaruh terbatas terhadap harga (R-squared rendah)</li>
+            <li>Terdapat fluktuasi harian yang cukup tinggi (standar deviasi $0.16)</li>
+        </ul>
+
+        <p><strong>Rekomendasi:</strong></p>
+        <ul>
+            <li>Perlu analisis faktor eksternal yang memengaruhi penurunan harga awal Juli</li>
+            <li>Model prediksi bisa dikembangkan dengan menambahkan variabel lain selain volume</li>
+            <li>Analisis time series (ARIMA) mungkin lebih cocok untuk data saham</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>6. Dokumentasi Tambahan</h2>
+        <p>Link terkait proyek ini:</p>
+        <ul>
+            <li><a href="#">Dataset asli di Kaggle</a></li>
+            <li><a href="#">Video Presentasi Konsep</a></li>
+            <li><a href="#">Video Proses Coding</a></li>
+        </ul>
+    </section>
+</body>
+
+</html>
